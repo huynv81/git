@@ -255,28 +255,161 @@ Kế toán trưởng nên dùng AI như **trợ lý tổng hợp, trợ lý ki�
 
 Ba bài toán nên thí điểm trước là **báo cáo biến động tháng**, **dự báo dòng tiền 13 tuần** và **rà soát công nợ/chứng từ theo ngoại lệ**. Chúng lặp lại thường xuyên, dễ đo thời gian trước–sau và vẫn giữ được bước kiểm tra của kế toán trưởng.
 
-### Ba ví dụ liền mạch
+### Cách biến một công việc thật thành quy trình AI
 
-**Ví dụ 1 — Báo cáo công nợ hàng tuần**
+Mọi bài thực hành bên dưới đều đi theo cùng một đường:
 
-Kế toán bắt đầu bằng Chat để thiết kế mẫu báo cáo. Khi công việc lặp lại, tạo Project chứa quy định và mẫu chuẩn; sau đó tạo Skill mô tả các bước kiểm tra. Nếu dữ liệu nằm trong hệ thống, đội kỹ thuật có thể cấp Connector/MCP/API để lấy đúng dữ liệu. Chỉ khi quy trình đã ổn định mới lập lịch chạy tự động. Mỗi lần chạy vẫn phải đối chiếu tổng và có kế toán duyệt.
+```mermaid
+flowchart LR
+    A[Chọn một việc] --> B[Chuẩn bị dữ liệu]
+    B --> C[Giao việc cho AI]
+    C --> D[Kiểm tra kết quả]
+    D -->|Có lỗi| E[Nói rõ lỗi và yêu cầu sửa]
+    E --> D
+    D -->|Đạt| F[Lưu cách làm và đo hiệu quả]
+```
 
-**Ví dụ 2 — Chuẩn bị chiến dịch marketing**
+Không tự động hóa ngay từ đầu. Trước tiên phải làm thử bằng Chat, tìm được cách kiểm tra đáng tin cậy, sau đó mới đưa quy tắc vào Project/Skill và cuối cùng mới cân nhắc Connector, MCP hoặc lịch chạy tự động.
 
-Nhân viên dùng Deep Research để tổng hợp thị trường từ nguồn có ngày và liên kết; dùng Project để giữ brief, chân dung khách hàng và quy chuẩn thương hiệu; dùng Chat để phát triển thông điệp; dùng công cụ ảnh/video để tạo phương án minh họa. Trước khi phát hành, người phụ trách kiểm tra nguồn, tuyên bố sản phẩm, bản quyền và sự nhất quán thương hiệu.
+### Bài thực hành 1 — Báo cáo công nợ hàng tuần
 
-**Ví dụ 3 — Xử lý bộ chứng từ thanh toán**
+**Kết quả cần đạt:** Trong thời gian ngắn, kế toán có bảng ưu tiên thu hồi nợ đúng tổng, đúng ngày và chỉ rõ hồ sơ cần kiểm tra.
 
-Vision/OCR trích số hóa đơn, ngày, mã số thuế và số tiền vào bảng nháp. AI đánh dấu trường không rõ thay vì tự điền. Excel/Sheets kiểm tra trùng, tổng và điều kiện; nhân viên đối chiếu từng ngoại lệ với chứng từ gốc. AI không phê duyệt thanh toán và không thay người chịu trách nhiệm.
+**1. Chuẩn bị trước khi hỏi AI**
 
-### Lộ trình bốn tuần
+| Cần chuẩn bị | Nội dung |
+|---|---|
+| File dữ liệu | Bảng công nợ còn mở, số chứng từ, khách hàng, ngày hóa đơn, ngày đến hạn, số tiền, người phụ trách |
+| Mốc thời gian | Ngày chốt báo cáo, ví dụ 30/09/2026 |
+| Quy ước | Tuổi nợ tính từ ngày đến hạn; các nhóm 0–30, 31–60, 61–90 và trên 90 ngày |
+| Điều kiện ưu tiên | Do kế toán trưởng quy định, ví dụ quá 60 ngày hoặc số dư trên 100 triệu đồng |
+| Kiểm soát | Tổng số dòng và tổng công nợ trong file gốc |
 
-| Tuần | Học và làm | Kết quả cần có |
-|---|---|---|
-| 1 — Hiểu đúng | Học nguyên lý, bảo mật và cách giao việc bằng ba câu hỏi; làm ba tác vụ nhỏ | 3 kết quả đã đối chiếu với cách làm cũ |
-| 2 — Chọn đúng | Thử Chat, Project, tìm kiếm/nghiên cứu, xử lý file; so sánh hai mô hình trên cùng một việc | Bảng chọn công cụ và ghi nhận thời gian/chất lượng |
-| 3 — Chuẩn hóa | Viết instruction cho dự án hoặc Gem; tạo một Skill/SOP đơn giản; thực hành quy trình bốn chặng | 1 quy trình lặp lại có checklist kiểm tra |
-| 4 — Áp dụng | Chạy quy trình trên dữ liệu được phép; đo hiệu quả; trình bày kết quả và rủi ro | 1 tình huống thực tế đủ bằng chứng để đánh giá |
+Nếu chưa có ngày đến hạn hoặc tiêu chí ưu tiên, phải bổ sung trước. AI không thể tự biết chính sách tín dụng của công ty.
+
+**2. Công cụ nên dùng**
+
+- Lần đầu: Chat có khả năng đọc Excel/CSV.
+- Khi làm hằng tuần: Project chứa quy ước và mẫu báo cáo.
+- Khi cách làm đã ổn định: Skill kiểm tra công nợ; Connector/MCP chỉ dùng nếu được cấp quyền lấy dữ liệu từ hệ thống.
+
+**3. Prompt dùng ngay**
+
+> Phân tích file công nợ đính kèm tại ngày 30/09/2026. Tính tuổi nợ từ ngày đến hạn và chia thành 0–30, 31–60, 61–90 và trên 90 ngày. Xếp ưu tiên các khoản quá 60 ngày hoặc trên 100 triệu đồng. Trả ra ba phần: tổng hợp theo nhóm tuổi nợ; danh sách cần ưu tiên thu hồi; dữ liệu thiếu hoặc bất thường. Nếu thiếu ngày hoặc số tiền, không được đoán và phải ghi `CẦN KIỂM TRA`. Trước khi trả kết quả, đối chiếu số dòng và tổng công nợ với file gốc.
+
+**4. Đầu ra đạt chuẩn phải có**
+
+- Tổng số dòng và tổng tiền đầu vào.
+- Bảng tổng hợp số tiền theo từng nhóm tuổi nợ.
+- Danh sách ưu tiên gồm khách hàng, chứng từ, ngày đến hạn, số ngày quá hạn, số tiền và người phụ trách.
+- Danh sách dòng thiếu dữ liệu, số dư âm, ngày bất hợp lý hoặc khả năng trùng chứng từ.
+- Xác nhận tổng đầu ra bằng tổng đầu vào; nếu lệch phải nêu số chênh lệch.
+
+**5. Cách kiểm tra và sửa lỗi**
+
+Kế toán kiểm tra tổng tiền, số dòng; tính tay hoặc bằng Excel một số dòng ở mỗi nhóm; kiểm tra 100% khoản ưu tiên và ngoại lệ. AI không được tự suy đoán nguyên nhân khách hàng chậm trả.
+
+Nếu phát hiện lỗi, không yêu cầu “làm lại cho đúng”. Hãy chỉ rõ bằng chứng:
+
+> Dòng của khách hàng ABC đang tính 75 ngày nhưng từ ngày đến hạn 20/08/2026 đến ngày chốt 30/09/2026 không phải 75 ngày. Hãy kiểm tra lại công thức tuổi nợ, sửa toàn bộ cột này, giữ nguyên các cột khác và báo số dòng đã thay đổi. Sau đó đối chiếu lại tổng.
+
+**6. Đo hiệu quả:** so sánh thời gian lập báo cáo, số lỗi phát hiện khi kiểm tra, số khoản bỏ sót và thời gian dành cho việc đôn đốc trước–sau khi dùng AI.
+
+### Bài thực hành 2 — Chuẩn bị chiến dịch marketing
+
+**Kết quả cần đạt:** Có bộ đề xuất chiến dịch bám đúng khách hàng, thông điệp và thương hiệu; mọi khẳng định về sản phẩm đều có nguồn hoặc được đánh dấu cần xác minh.
+
+**1. Chuẩn bị trước khi hỏi AI**
+
+| Cần chuẩn bị | Nội dung |
+|---|---|
+| Brief | Mục tiêu chiến dịch, sản phẩm, khách hàng, khu vực, thời gian và ngân sách |
+| Nguồn sự thật | Thông tin sản phẩm đã duyệt, bảng giá, chính sách và đường dẫn chính thức |
+| Thương hiệu | Giọng điệu, màu sắc, logo, từ được dùng và từ bị cấm |
+| Kênh | Facebook, website, email, TikTok hoặc kênh cụ thể |
+| Tiêu chí thành công | Lead, lượt đăng ký, doanh thu, tỷ lệ chuyển đổi hoặc chỉ số được giao |
+
+**2. Công cụ nên dùng**
+
+- Deep Research khi cần nghiên cứu thị trường hoặc đối thủ; phải yêu cầu nguồn và thời gian.
+- Project lưu brief, khách hàng mục tiêu và quy chuẩn thương hiệu.
+- Chat phát triển ý tưởng và nội dung; công cụ ảnh/video tạo bản nháp hình ảnh.
+
+**3. Prompt dùng ngay**
+
+> Dựa trên brief và bộ quy chuẩn thương hiệu đính kèm, đề xuất ba hướng chiến dịch cho [sản phẩm] nhắm tới [nhóm khách hàng]. Với mỗi hướng, trình bày thông điệp chính, lý do phù hợp, ý tưởng hình ảnh, nội dung cho Facebook và email, cùng chỉ số cần theo dõi. Chỉ sử dụng thông tin sản phẩm trong tài liệu đã cung cấp. Không tự tạo giá, ưu đãi, số liệu hoặc cam kết; nội dung nào chưa có nguồn phải ghi `CẦN XÁC MINH`.
+
+**4. Đầu ra đạt chuẩn phải có**
+
+- Ba phương án đủ khác nhau để lựa chọn, không chỉ thay vài từ.
+- Bảng so sánh đối tượng, thông điệp, kênh, ưu điểm, rủi ro và chỉ số.
+- Nội dung mẫu phù hợp giới hạn của từng kênh.
+- Danh sách tuyên bố về giá, tính năng, kết quả hoặc thị trường cần kiểm chứng.
+- Không sử dụng dữ liệu hoặc hình ảnh không rõ quyền sử dụng.
+
+**5. Cách kiểm tra và sửa lỗi**
+
+Người phụ trách kiểm tra thông tin sản phẩm, giá, ưu đãi, đối tượng, giọng điệu, chính tả, bản quyền và quy định quảng cáo. Không đánh giá chung chung rằng nội dung “chưa hay”; hãy nói chính xác điều cần thay đổi:
+
+> Giữ nguyên phương án 2 và cấu trúc hiện tại. Bỏ câu “hiệu quả số 1” vì không có bằng chứng. Viết lại tiêu đề dưới 12 từ, dùng giọng điệu gần gũi trong tài liệu thương hiệu và không thay đổi giá hoặc ưu đãi.
+
+**6. Đo hiệu quả:** thời gian từ brief đến bản nháp, số vòng sửa, tỷ lệ nội dung được duyệt, chi phí tạo bản nháp và kết quả chiến dịch. Không kết luận AI hiệu quả chỉ vì tạo được nhiều nội dung hơn.
+
+### Bài thực hành 3 — Kiểm tra bộ chứng từ thanh toán
+
+**Kết quả cần đạt:** AI tạo bảng đối chiếu và chỉ ra ngoại lệ để kế toán tập trung kiểm tra; AI không quyết định chứng từ hợp lệ và không phê duyệt thanh toán.
+
+**1. Chuẩn bị trước khi hỏi AI**
+
+| Cần chuẩn bị | Nội dung |
+|---|---|
+| Chứng từ | Hóa đơn, hợp đồng/đơn đặt hàng, biên bản nghiệm thu hoặc phiếu nhập |
+| Danh mục chuẩn | Nhà cung cấp, mã số thuế, tài khoản ngân hàng và hạn mức đã được duyệt |
+| Quy tắc đối chiếu | Những trường bắt buộc phải khớp; mức sai lệch được chấp nhận nếu có |
+| Phạm vi quyền | Chỉ dùng công cụ/tài khoản đã được công ty cho phép xử lý loại dữ liệu này |
+| Kiểm soát | Số bộ chứng từ, tổng số tiền và danh sách file đầu vào |
+
+**2. Công cụ nên dùng**
+
+- Vision/OCR để đọc ảnh và PDF scan.
+- Excel/Sheets để kiểm tra trùng và tính tổng.
+- Project/Skill để lưu danh mục trường bắt buộc và mẫu bảng ngoại lệ.
+- Không kết nối trực tiếp hệ thống thanh toán nếu chưa có cơ chế phân quyền, nhật ký và phê duyệt.
+
+**3. Prompt dùng ngay**
+
+> Đọc các bộ chứng từ đính kèm và lập bảng gồm nhà cung cấp, mã số thuế, số hóa đơn, ngày hóa đơn, số hợp đồng/đơn hàng, số tiền trước thuế, thuế, tổng thanh toán và tài khoản ngân hàng. So sánh hóa đơn với hợp đồng/đơn hàng và biên bản nghiệm thu. Chỉ ghi `KHỚP`, `KHÔNG KHỚP` hoặc `THIẾU DỮ LIỆU` kèm vị trí chứng từ. Không tự sửa, không kết luận đủ điều kiện thanh toán. Đánh dấu ký tự không đọc rõ và kiểm tra hóa đơn có khả năng trùng số, trùng tiền hoặc trùng nhà cung cấp.
+
+**4. Đầu ra đạt chuẩn phải có**
+
+- Một dòng cho mỗi bộ chứng từ và đường dẫn/tên file làm bằng chứng.
+- Từng trường được đối chiếu, không chỉ kết luận chung “hợp lệ”.
+- Danh sách sai lệch, tài liệu thiếu, ký tự OCR không chắc chắn và hóa đơn có khả năng trùng.
+- Tổng số bộ và tổng số tiền để đối chiếu với danh sách đầu vào.
+- Không có cột “phê duyệt thanh toán” do AI quyết định.
+
+**5. Cách kiểm tra và sửa lỗi**
+
+Kế toán kiểm tra 100% mã số thuế, số hóa đơn, số tiền, tài khoản ngân hàng và mọi ngoại lệ; đồng thời chọn mẫu ngẫu nhiên trong nhóm AI ghi `KHỚP`. Khi ảnh mờ, xem chứng từ gốc thay vì yêu cầu AI đoán lại.
+
+Ví dụ yêu cầu sửa:
+
+> Hóa đơn `HD023.pdf` ghi tổng thanh toán 118.800.000 đồng, không phải 118.000.000 đồng. Hãy đọc lại riêng file này ở độ rõ cao hơn, cập nhật đúng một dòng tương ứng, giữ nguyên các dòng khác và tính lại tổng. Nếu vẫn không chắc chắn, ghi `CẦN KIỂM TRA BẢN GỐC`.
+
+**6. Đo hiệu quả:** số phút mỗi bộ hồ sơ, tỷ lệ trường OCR sai, số ngoại lệ phát hiện đúng, số ngoại lệ bỏ sót và số bộ phải làm lại.
+
+### Lộ trình bốn tuần gắn với ba bài thực hành
+
+Mỗi nhân viên chọn bài gần công việc của mình nhất. Không cần thực hiện cả ba bài.
+
+| Tuần | Công nợ | Marketing | Chứng từ thanh toán | Kết quả cuối tuần |
+|---|---|---|---|---|
+| **1 — Làm thử** | Chạy một file nhỏ và so với báo cáo cũ | Tạo một bộ nội dung từ brief cũ | Trích xuất 5–10 bộ chứng từ mẫu | Ghi thời gian làm cũ, thời gian dùng AI và lỗi tìm thấy |
+| **2 — Làm đúng** | Chốt cách tính tuổi nợ và checklist đối chiếu | Chốt nguồn sự thật và checklist thương hiệu | Chốt trường bắt buộc và cách kiểm tra OCR | Có prompt ngắn, mẫu đầu ra và checklist được người phụ trách duyệt |
+| **3 — Làm lặp lại** | Đưa quy tắc vào Project/Skill và chạy file mới | Đưa brief mẫu, thương hiệu vào Project | Đưa bảng kiểm vào Project/Skill và chạy bộ mới | Hai lần liên tiếp cho đầu ra cùng cấu trúc, không tăng lỗi |
+| **4 — Đo và quyết định** | Chạy báo cáo tuần thật có người duyệt | Làm một nội dung thật trước khi phát hành | Xử lý một lô thật trong phạm vi được phép | Báo cáo trước–sau và quyết định: giữ, sửa hay dừng cách làm |
+
+Một quy trình chỉ được coi là đạt khi **nhanh hơn, không làm tăng sai sót, không vi phạm bảo mật và người chịu trách nhiệm có thể kiểm tra được kết quả**. Nếu AI liên tục sai cùng một loại dữ liệu, dừng mở rộng; sửa dữ liệu đầu vào, quy tắc hoặc công cụ trước khi tiếp tục.
 
 ### Yêu cầu thực hiện
 
