@@ -80,7 +80,7 @@ Do đó, không yêu cầu chung chung: “Hãy làm báo cáo này thật chín
 
 - **Mô hình** là “bộ não” AI. Mô hình nhanh/nhẹ phù hợp việc đơn giản, khối lượng lớn; mô hình suy luận mạnh phù hợp việc khó nhưng thường tốn thời gian và chi phí hơn.
 - **Ngữ cảnh (context)** là toàn bộ thông tin AI đang được phép nhìn thấy: câu hỏi, file, lịch sử trao đổi, hướng dẫn và dữ liệu từ công cụ. Thiếu ngữ cảnh thì AI phải đoán; ngữ cảnh lẫn lộn thì AI dễ hiểu sai.
-- **Prompt** là yêu cầu tại một thời điểm. Prompt tốt nêu rõ mục tiêu, dữ liệu, quy tắc, đầu ra và cách tự kiểm tra.
+- **Prompt** là lời giao việc cho AI. Thông thường chỉ cần nói rõ AI phải làm gì, dùng thông tin nào và trả kết quả ra sao; với việc quan trọng thì thêm yêu cầu kiểm tra.
 - **Instruction** là quy tắc dùng lặp lại. Có thể đặt ở cấp tổ chức/hệ thống, cấp ứng dụng hoặc cấp dự án. Cấp cao hơn quy định nguyên tắc chung; cấp thấp hơn bổ sung yêu cầu cụ thể và không được trái với cấp trên.
 
 Chọn mô hình bằng thử nghiệm trên cùng một bộ việc mẫu. Tổng chi phí không chỉ là phí tài khoản: còn gồm thời gian chờ, thời gian kiểm tra và chi phí sửa sai.
@@ -172,61 +172,39 @@ Cách phân biệt nhanh:
 
 ## 4. Cách giao việc để AI cho kết quả tốt và ít sai nhất
 
-### Một yêu cầu tốt gồm sáu mảnh
+### Giao việc cho AI bằng ba câu hỏi
 
-> **Vai trò + Mục tiêu + Dữ liệu + Quy tắc + Đầu ra + Tự kiểm tra**
+Không cần học công thức prompt và không cần viết dài. Trước khi gửi, chỉ cần tự trả lời ba câu:
 
-Đây không phải sáu từ để học thuộc. Mỗi phần giải quyết một nguyên nhân khiến AI trả lời sai:
+1. **Muốn AI làm gì?** — Tóm tắt, so sánh, kiểm tra, phân tích hay soạn bản nháp?
+2. **AI dùng thông tin nào?** — File, email, hình ảnh, kỳ báo cáo hoặc nguồn cụ thể nào?
+3. **Muốn nhận kết quả ra sao?** — Một bảng, email, danh sách việc hay bản báo cáo?
 
-| Thành phần | Hiểu đơn giản là gì? | Viết như thế nào? | Nếu thiếu thì điều gì xảy ra? |
-|---|---|---|---|
-| **Vai trò** | Góc nhìn chuyên môn AI cần dùng để hỗ trợ người làm việc | “Bạn là trợ lý cho kế toán công nợ, nhiệm vụ là chuẩn bị bản nháp để kế toán kiểm tra.” | AI có thể trả lời quá chung hoặc dùng sai cách diễn đạt. Vai trò không biến AI thành người có chứng chỉ và không chuyển trách nhiệm cho AI. |
-| **Mục tiêu** | Việc cần hoàn thành và kết quả đó dùng để làm gì | “Phân tích công nợ đến ngày 30/09 để kế toán trưởng xác định khách hàng cần ưu tiên thu hồi.” | AI không biết nên tập trung vào vấn đề nào và dễ tạo một báo cáo dài nhưng không giúp ra quyết định. |
-| **Dữ liệu** | Nguồn thông tin AI được phép sử dụng, gồm file, sheet, kỳ và phạm vi | “Chỉ dùng file `Cong_no_2026-09.xlsx`, sheet `AR`; cột số tiền dùng đơn vị VND.” | AI có thể lấy nhầm kỳ, nhầm sheet, dùng kiến thức bên ngoài hoặc tự bổ sung dữ kiện. |
-| **Quy tắc** | Định nghĩa nghiệp vụ, điều kiện, ngưỡng và những việc bị cấm | “Tuổi nợ tính từ ngày đến hạn đến 30/09; chia 0–30, 31–60, 61–90 và trên 90 ngày; không đoán ô trống.” | AI có thể dùng cách tính hoặc tiêu chuẩn khác với công ty. |
-| **Đầu ra** | Hình dạng sản phẩm cần nhận, đối tượng đọc và mức độ chi tiết | “Xuất bảng gồm khách hàng, chứng từ, ngày đến hạn, số ngày quá hạn, số tiền và mức ưu tiên; sau bảng có tóm tắt năm dòng.” | AI có thể trả một đoạn văn khó kiểm tra, thiếu cột hoặc không phù hợp với người nhận. |
-| **Tự kiểm tra** | Các phép đối chiếu AI phải làm và bằng chứng phải trình bày trước khi trả kết quả | “Đối chiếu tổng tiền đầu vào–đầu ra, đếm số dòng, liệt kê dòng thiếu dữ liệu và ghi `CẦN KIỂM TRA` nếu không chắc.” | Lỗi có thể bị che trong một câu trả lời nghe rất tự tin. Tự kiểm tra giúp phát hiện lỗi, không bảo đảm AI đúng tuyệt đối. |
+Ghép ba câu trả lời thành một yêu cầu tự nhiên:
 
-#### Cách viết prompt từ một công việc đang làm
+> Hãy **[làm việc gì]**, sử dụng **[thông tin nào]** và trả kết quả dưới dạng **[mong muốn]**.
 
-Không bắt đầu bằng câu chữ hoa mỹ. Lấy chính quy trình công việc và trả lời lần lượt sáu câu:
+Ví dụ đơn giản:
 
-1. AI đang **hỗ trợ ai**, ở công đoạn nào?
-2. Sau khi AI làm xong, người sử dụng cần **quyết định hoặc hoàn thành việc gì**?
-3. AI được dùng **đúng những file, sheet, cột, kỳ và nguồn nào**?
-4. Công ty đang dùng **định nghĩa, ngưỡng, công thức và điều cấm nào**?
-5. Người nhận cần **bảng, email, báo cáo hay checklist**, gồm những trường nào?
-6. Có thể dùng **tổng kiểm soát, nguồn gốc, công thức hoặc mẫu đối chiếu nào** để phát hiện sai?
+> Tóm tắt email dưới đây và trả ra danh sách gồm việc cần làm, người phụ trách và thời hạn.
 
-Điền câu trả lời vào mẫu sau:
+Ví dụ với công nợ:
 
-```text
-VAI TRÒ: Bạn hỗ trợ [bộ phận/người phụ trách] thực hiện [công đoạn].
+> Phân tích file công nợ tháng 9 đính kèm, chia theo tuổi nợ 0–30, 31–60, 61–90 và trên 90 ngày. Trả ra bảng khách hàng cần ưu tiên thu hồi.
 
-MỤC TIÊU: Hãy [việc cần làm] để [người sử dụng] có thể [quyết định/hành động].
+Đối với số liệu hoặc công việc quan trọng, thêm **một câu an toàn** ở cuối:
 
-DỮ LIỆU: Chỉ sử dụng [tên file/nguồn], kỳ [thời gian], phạm vi [sheet/cột/dòng].
-Nếu thiếu dữ liệu, hãy hỏi hoặc đánh dấu thiếu; không tự bổ sung.
+> Nếu thiếu hoặc không đọc rõ dữ liệu, không được đoán; hãy đánh dấu `CẦN KIỂM TRA` và đối chiếu tổng trước khi trả kết quả.
 
-QUY TẮC: Áp dụng [định nghĩa/công thức/ngưỡng/quy trình].
-Không được [những việc bị cấm].
+Như vậy, prompt công nợ hoàn chỉnh chỉ cần:
 
-ĐẦU RA: Trả kết quả dưới dạng [bảng/email/báo cáo/checklist], gồm [các trường],
-dành cho [người đọc], độ dài [giới hạn nếu có].
+> Phân tích file công nợ tháng 9 đính kèm, chia theo tuổi nợ 0–30, 31–60, 61–90 và trên 90 ngày. Trả ra bảng khách hàng cần ưu tiên thu hồi. Nếu thiếu hoặc không đọc rõ dữ liệu, không được đoán; hãy đánh dấu `CẦN KIỂM TRA` và đối chiếu tổng trước khi trả kết quả.
 
-TỰ KIỂM TRA: Trước khi trả kết quả, hãy [đối chiếu tổng/đếm dòng/kiểm tra nguồn],
-liệt kê [ngoại lệ/dữ liệu thiếu/giả định] và đánh dấu phần chưa chắc chắn.
-```
+Nếu kết quả lần đầu chưa đúng, nói thẳng phần cần sửa, chẳng hạn: “Chỉ dùng ngày đến hạn, không dùng ngày hóa đơn” hoặc “Thêm cột số chứng từ”. Không cần viết lại toàn bộ prompt.
 
-**Yêu cầu yếu:**
+Những quy tắc dùng lặp lại nên được đặt một lần trong Project, Gem hoặc Skill. Khi đó, yêu cầu hằng ngày có thể rất ngắn:
 
-> Phân tích công nợ tháng này và làm báo cáo hay.
-
-**Cùng công việc đó, viết đầy đủ hơn:**
-
-> Bạn là trợ lý cho kế toán công nợ, chỉ chuẩn bị bản phân tích để kế toán kiểm tra. Hãy phân tích công nợ đến ngày 30/09/2026 để kế toán trưởng xác định khách hàng cần ưu tiên thu hồi. Chỉ dùng file `Cong_no_2026-09.xlsx`, sheet `AR`; số tiền tính bằng VND. Tuổi nợ tính từ ngày đến hạn đến 30/09/2026 và chia thành 0–30, 31–60, 61–90 và trên 90 ngày. Không tự điền ô trống và không suy đoán nguyên nhân chậm trả. Tạo bảng gồm khách hàng, số chứng từ, ngày đến hạn, số ngày quá hạn, số tiền, nhóm tuổi nợ và mức ưu tiên; sau bảng viết tóm tắt tối đa năm dòng. Trước khi trả kết quả, đối chiếu tổng tiền và số dòng đầu vào–đầu ra, liệt kê dòng thiếu ngày hoặc số tiền và ghi `CẦN KIỂM TRA` tại mọi điểm chưa chắc chắn.
-
-Prompt dài hơn không mặc nhiên tốt hơn. Prompt tốt là prompt chứa **đủ điều kiện để làm đúng và đủ dấu vết để kiểm tra**. Với việc phức tạp, yêu cầu AI làm từng bước thay vì dồn tất cả vào một câu lệnh.
+> Phân tích file công nợ tháng 9 theo quy tắc của dự án và lập danh sách ưu tiên thu hồi.
 
 ### Quy trình bốn chặng
 
@@ -295,7 +273,7 @@ Vision/OCR trích số hóa đơn, ngày, mã số thuế và số tiền vào b
 
 | Tuần | Học và làm | Kết quả cần có |
 |---|---|---|
-| 1 — Hiểu đúng | Học nguyên lý, bảo mật, prompt sáu mảnh; làm ba tác vụ nhỏ | 3 kết quả đã đối chiếu với cách làm cũ |
+| 1 — Hiểu đúng | Học nguyên lý, bảo mật và cách giao việc bằng ba câu hỏi; làm ba tác vụ nhỏ | 3 kết quả đã đối chiếu với cách làm cũ |
 | 2 — Chọn đúng | Thử Chat, Project, tìm kiếm/nghiên cứu, xử lý file; so sánh hai mô hình trên cùng một việc | Bảng chọn công cụ và ghi nhận thời gian/chất lượng |
 | 3 — Chuẩn hóa | Viết instruction cho dự án hoặc Gem; tạo một Skill/SOP đơn giản; thực hành quy trình bốn chặng | 1 quy trình lặp lại có checklist kiểm tra |
 | 4 — Áp dụng | Chạy quy trình trên dữ liệu được phép; đo hiệu quả; trình bày kết quả và rủi ro | 1 tình huống thực tế đủ bằng chứng để đánh giá |
